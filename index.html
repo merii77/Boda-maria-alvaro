@@ -789,6 +789,7 @@
       <a href="#detalles">Detalles</a>
       <a href="#mapa">Mapa</a>
       <a href="#mensajes">Mensajes</a>
+      <a href="#fotos">Fotos</a>
       <a href="#canciones">Canciones</a>
       <a href="#trivia">Trivia</a>
       <a href="#regalo">Regalo</a>
@@ -1052,6 +1053,25 @@
     </section>
   </div>
 
+  <!-- FOTOS -->
+  <div class="band">
+    <section class="section" id="fotos" style="text-align:center;">
+      <div class="reveal">
+        <p class="section-tag" style="justify-content:center;">Recuerdos</p>
+        <h2>Fotos de la <em>boda</em></h2>
+        <p class="section-lead" style="margin-inline:auto; text-align:center;">
+          Aquí encontraréis todas las fotos del día. ¡Subid también las vuestras para que las tengamos todas juntas!
+        </p>
+      </div>
+      <div class="reveal" style="transition-delay:0.1s; margin-top:2.5rem;">
+        <a href="https://photos.app.goo.gl/3ymA7G1U5TC17z2Q9" target="_blank" rel="noopener"
+           class="btn" style="font-size:0.88rem; padding:1rem 2.5rem;">
+          📷 &nbsp;Ver y subir fotos
+        </a>
+      </div>
+    </section>
+  </div>
+
   <!-- CANCIONES -->
   <section class="section" id="canciones">
     <div class="reveal">
@@ -1234,10 +1254,7 @@
     renderMsgs();
 
     // ── SONGS ──
-    const DEFAULT_SONGS = [
-      { title: 'La Vie en Rose', artist: 'Édith Piaf' },
-      { title: 'Perfect', artist: 'Ed Sheeran' },
-    ];
+    const DEFAULT_SONGS = [];
 
     function loadSongs() {
       try { return JSON.parse(localStorage.getItem('boda_songs')) || DEFAULT_SONGS; }
