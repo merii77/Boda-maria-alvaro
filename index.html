@@ -1046,7 +1046,7 @@
           <label>Tu mensaje</label>
           <textarea id="msg-text" placeholder="Escribe tu deseo para María y Álvaro..."></textarea>
         </div>
-        <button class="btn" onclick="submitMessage()">✉ &nbsp;Enviar mensaje</button>
+        <button class="btn" id="msg-btn" onclick="submitMessage()">✉ &nbsp;Enviar mensaje</button>
       </div>
 
       <div class="messages-grid" id="messages-list"></div>
@@ -1091,7 +1091,7 @@
           <input type="text" id="song-artist" placeholder="Nombre del artista" maxlength="80" />
         </div>
       </div>
-      <button class="btn" onclick="submitSong()">♪ &nbsp;Sugerir canción</button>
+      <button class="btn" id="song-btn" onclick="submitSong()">♪ &nbsp;Sugerir canción</button>
     </div>
 
     <div class="songs-list" id="songs-list"></div>
@@ -1215,22 +1215,31 @@
     }
     tick(); setInterval(tick, 1000);
 
-    // ── MESSAGES ──
+    // ── CONFIG ──
+    const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxKY57VQm9QduYGbbZbVYdwYZ1KDmUEyuXXEpi2yGAxT9-1v6nck4RCo0fW_VIpSG0d/exec';
+
+    // ── MESSAGES & SONGS ──
     const DEFAULT_MSGS = [
       { name: 'Mamá', text: '¡Os deseamos toda la felicidad del mundo! Estamos tan orgullosos de vosotros.' },
       { name: 'Los amigos de siempre', text: 'Que esta aventura juntos sea la mejor de todas. ¡Salud y larga vida al amor!' },
     ];
 
-    function loadMsgs() {
-      try { return JSON.parse(localStorage.getItem('boda_msgs')) || DEFAULT_MSGS; }
-      catch { return DEFAULT_MSGS; }
-    }
+    let msgs = [], songs = [];
 
-    function saveMsgs(arr) {
-      try { localStorage.setItem('boda_msgs', JSON.stringify(arr)); } catch {}
+    async function loadData() {
+      if (SHEET_URL === 'PENDIENTE') {
+        msgs = DEFAULT_MSGS; songs = [];
+        renderMsgs(); renderSongs(); return;
+      }
+      try {
+        const data = await fetch(SHEET_URL).then(r => r.json());
+        msgs  = (data.msgs  && data.msgs.length)  ? data.msgs  : DEFAULT_MSGS;
+        songs = (data.songs && data.songs.length) ? data.songs : [];
+      } catch {
+        msgs = DEFAULT_MSGS; songs = [];
+      }
+      renderMsgs(); renderSongs();
     }
-
-    let msgs = loadMsgs();
 
     function renderMsgs() {
       document.getElementById('messages-list').innerHTML = msgs.map(m => `
@@ -1241,32 +1250,25 @@
         </div>`).join('');
     }
 
-    function submitMessage() {
+    async function submitMessage() {
       const name = document.getElementById('msg-name').value.trim();
       const text = document.getElementById('msg-text').value.trim();
       if (!name || !text) { alert('Por favor, escribe tu nombre y un mensaje.'); return; }
-      msgs.unshift({ name, text });
-      saveMsgs(msgs);
-      renderMsgs();
-      document.getElementById('msg-name').value = '';
-      document.getElementById('msg-text').value = '';
+      const btn = document.getElementById('msg-btn');
+      btn.disabled = true; btn.innerHTML = '⏳ &nbsp;Enviando…';
+      try {
+        if (SHEET_URL !== 'PENDIENTE') {
+          await fetch(`${SHEET_URL}?${new URLSearchParams({ action: 'addMsg', name, text })}`);
+        }
+        msgs.unshift({ name, text });
+        renderMsgs();
+        document.getElementById('msg-name').value = '';
+        document.getElementById('msg-text').value = '';
+      } catch { alert('Error al enviar. Inténtalo de nuevo.'); }
+      finally { btn.disabled = false; btn.innerHTML = '✉ &nbsp;Enviar mensaje'; }
     }
-    renderMsgs();
 
     // ── SONGS ──
-    const DEFAULT_SONGS = [];
-
-    function loadSongs() {
-      try { return JSON.parse(localStorage.getItem('boda_songs')) || DEFAULT_SONGS; }
-      catch { return DEFAULT_SONGS; }
-    }
-
-    function saveSongs(arr) {
-      try { localStorage.setItem('boda_songs', JSON.stringify(arr)); } catch {}
-    }
-
-    let songs = loadSongs();
-
     const pillClasses = ['pill-peach','pill-sage','pill-gold','pill-rose'];
     const noteEmojis  = ['🎵','🎶','🎸','🎹'];
 
@@ -1281,17 +1283,23 @@
         </div>`).join('');
     }
 
-    function submitSong() {
+    async function submitSong() {
       const title  = document.getElementById('song-title').value.trim();
       const artist = document.getElementById('song-artist').value.trim();
       if (!title || !artist) { alert('Por favor, escribe el título y el artista.'); return; }
-      songs.unshift({ title, artist });
-      saveSongs(songs);
-      renderSongs();
-      document.getElementById('song-title').value  = '';
-      document.getElementById('song-artist').value = '';
+      const btn = document.getElementById('song-btn');
+      btn.disabled = true; btn.innerHTML = '⏳ &nbsp;Enviando…';
+      try {
+        if (SHEET_URL !== 'PENDIENTE') {
+          await fetch(`${SHEET_URL}?${new URLSearchParams({ action: 'addSong', title, artist })}`);
+        }
+        songs.unshift({ title, artist });
+        renderSongs();
+        document.getElementById('song-title').value  = '';
+        document.getElementById('song-artist').value = '';
+      } catch { alert('Error al enviar. Inténtalo de nuevo.'); }
+      finally { btn.disabled = false; btn.innerHTML = '♪ &nbsp;Sugerir canción'; }
     }
-    renderSongs();
 
     // ── TRIVIA ──
     const qs = [
@@ -1393,6 +1401,7 @@
     }
 
     buildDots(); loadQ();
+    loadData();
   </script>
 </body>
 </html>
