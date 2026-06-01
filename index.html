@@ -588,41 +588,6 @@
     .song-title { font-size: 0.92rem; color: var(--text); font-weight: 400; }
     .song-artist { font-size: 0.78rem; color: var(--muted); margin-top: 0.1rem; }
 
-    /* ── FEATURED PHOTO ── */
-    .featured-photo-card {
-      max-width: min(430px, 92vw);
-      margin: 0 auto;
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 0.75rem;
-      box-shadow: 0 12px 34px rgba(26,46,40,0.13);
-      transform: rotate(-0.5deg);
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
-    }
-
-    .featured-photo-card:hover {
-      transform: translateY(-4px) rotate(0deg);
-      box-shadow: 0 16px 42px rgba(26,46,40,0.18);
-    }
-
-    .featured-photo-card img {
-      width: 100%;
-      aspect-ratio: 4 / 5;
-      object-fit: cover;
-      object-position: center;
-      display: block;
-      border-radius: 12px;
-    }
-
-    .featured-photo-caption {
-      font-family: 'Playfair Display', serif;
-      font-style: italic;
-      font-size: 1rem;
-      color: var(--text);
-      margin-top: 0.65rem;
-      text-align: center;
-    }
 
     /* ── TRIVIA ── */
     .trivia-card {
@@ -804,7 +769,6 @@
       .iban-row { flex-direction: column; align-items: stretch; }
       #iban-text { font-size: 0.82rem; letter-spacing: 0.04em; text-align: center; }
       #copy-btn { width: 100%; justify-content: center; }
-      .featured-photo-card { transform: none; }
     }
 
     @media (max-width: 400px) {
@@ -1114,16 +1078,6 @@
         <p class="section-lead" style="margin-inline:auto; text-align:center;">
           Aquí encontraréis todas las fotos del día. ¡Subid también las vuestras para que las tengamos todas juntas!
         </p>
-      </div>
-      <div class="reveal" style="transition-delay:0.08s; margin-top:2.2rem;">
-        <figure class="featured-photo-card">
-          <img src="WhatsApp Image 2026-05-26 at 17.01.37 (1).jpeg"
-               alt="Zapatillas de María y Álvaro con la fecha de la boda"
-               loading="lazy" />
-          <figcaption class="featured-photo-caption">
-            Un adelanto del gran día
-          </figcaption>
-        </figure>
       </div>
       <div class="reveal" style="transition-delay:0.1s; margin-top:2.5rem;">
         <a href="https://photos.app.goo.gl/3ymA7G1U5TC17z2Q9" target="_blank" rel="noopener"
